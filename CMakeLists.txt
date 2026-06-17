@@ -97,6 +97,7 @@ set(SHARED_SOURCES
     src/bpp_shared/logger/style.cpp
     src/bpp_shared/config/config.cpp
     src/bpp_shared/config/cli_args.cpp
+    src/bpp_shared/game_runtime.cpp
 )
 
 # Server-specific source code
@@ -115,8 +116,10 @@ set(CLIENT_SOURCES
     src/bpp_client/inputs.cpp
     src/bpp_client/assets.cpp
 
-    src/bpp_client/renderers/world_renderer.cpp
+    src/bpp_client/renderers/shader_program.cpp
+    src/bpp_client/renderers/sub_chunk.cpp
     src/bpp_client/renderers/sub_chunk_mesher.cpp
+    src/bpp_client/renderers/world_renderer.cpp
 
     external/glad/src/glad.c
 )

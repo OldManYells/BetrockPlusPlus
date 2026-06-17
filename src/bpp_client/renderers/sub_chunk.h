@@ -1,124 +1,53 @@
 /*
  * Copyright (c) 2026, Aidan <JcbbcEnjoyer>
+ * Copyright (c) 2026, OldManYells <OldManYells>
  *
  * SPDX-License-Identifier: GPL-3.0-only
  *
-*/
+ */
 
 #pragma once
+
+#include <array>
+#include <cstdint>
+#include <vector>
+
 #include <glad/glad.h>
-#include <numeric_structs.h>
+#include <glm/vec3.hpp>
 
-struct SubChunk {
-    SubChunk() = default;
-    SubChunk(const SubChunk&) = delete;
-    SubChunk& operator=(const SubChunk&) = delete;
+#include "world/chunk.h"
 
-	Int2 chunkPos = { 0, 0 };
-	Int2 offset = { 0, 0 }; // world offset of this sub chunk (chunkPos * 16) + offset
-    int chunk_slice = 0; // 0-8, y position of this slice
+struct WorldVertex {
+  glm::vec3 position;
+  glm::vec3 color;
+};
 
-    // Opaque geometry
-    unsigned int VAO = 0;
-    unsigned int VBO = 0;
-    int vertexCount = 0;
+using SubChunkRevisions = std::array<uint64_t, 7>;
 
-    // Translucent geometry (water, glass, etc.)
-    unsigned int transVAO = 0;
-    unsigned int transVBO = 0;
-    int transVertexCount = 0;
+// Owns the GPU geometry and dependency state for one 16-block-tall slice.
+class SubChunk {
+public:
+  SubChunk() = default;
+  ~SubChunk();
 
-    // Overlay geometry (grass overlay, etc)
-    unsigned int overlayVAO = 0;
-    unsigned int overlayVBO = 0;
-    int overlayVertexCount = 0;
+  SubChunk(const SubChunk &) = delete;
+  SubChunk &operator=(const SubChunk &) = delete;
+  SubChunk(SubChunk &&other) noexcept;
+  SubChunk &operator=(SubChunk &&other) noexcept;
 
-	int64_t parentChunk = 0; // so we can easily find the parent chunk when we need to update this sub chunk, hash of ChunkPos
-    bool dirty = true;
+  bool matches(const Chunk &chunk, uint8_t neighborMask,
+               const SubChunkRevisions &revisions) const;
+  void upload(const std::vector<WorldVertex> &vertices, const Chunk &chunk,
+              uint8_t neighborMask, const SubChunkRevisions &revisions);
+  void draw() const;
 
-    // since we handle gpu buffer objects we have to be very careful about copying!
-    SubChunk(SubChunk&& other) noexcept {
-        VAO = other.VAO;
-        VBO = other.VBO;
-        vertexCount = other.vertexCount;
-        transVAO = other.transVAO;
-        transVBO = other.transVBO;
-        transVertexCount = other.transVertexCount;
-        overlayVAO = other.overlayVAO;
-        overlayVBO = other.overlayVBO;
-        overlayVertexCount = other.overlayVertexCount;
-        dirty = other.dirty;
-        chunkX = other.chunkX;
-        chunkZ = other.chunkZ;
-        chunk_slice = other.chunk_slice;
-        offset_x = other.offset_x;
-        offset_z = other.offset_z;
-        parentChunk = other.parentChunk;
-        other.VAO = 0;
-        other.VBO = 0;
-        other.vertexCount = 0;
-        other.transVAO = 0;
-        other.transVBO = 0;
-        other.transVertexCount = 0;
-        other.overlayVAO = 0;
-        other.overlayVBO = 0;
-        other.overlayVertexCount = 0;
-        other.parentChunk = nullptr;
-    }
+private:
+  void release();
 
-    SubChunk& operator=(SubChunk&& other) noexcept {
-        if (this != &other) {
-            cleanup();
-            VAO = other.VAO;
-            VBO = other.VBO;
-            vertexCount = other.vertexCount;
-            transVAO = other.transVAO;
-            transVBO = other.transVBO;
-            transVertexCount = other.transVertexCount;
-            overlayVAO = other.overlayVAO;
-            overlayVBO = other.overlayVBO;
-            overlayVertexCount = other.overlayVertexCount;
-            dirty = other.dirty;
-            chunkX = other.chunkX;
-            chunkZ = other.chunkZ;
-            chunk_slice = other.chunk_slice;
-            offset_x = other.offset_x;
-            offset_z = other.offset_z;
-            parentChunk = other.parentChunk;
-            other.VAO = 0;
-            other.VBO = 0;
-            other.vertexCount = 0;
-            other.transVAO = 0;
-            other.transVBO = 0;
-            other.transVertexCount = 0;
-            other.overlayVAO = 0;
-            other.overlayVBO = 0;
-            other.overlayVertexCount = 0;
-            other.parentChunk = nullptr;
-        }
-        return *this;
-    }
-
-    ~SubChunk() { cleanup(); }
-
-    void cleanup() {
-        if (VAO) {
-            glDeleteVertexArrays(1, &VAO);
-            glDeleteBuffers(1, &VBO);
-            VAO = 0;
-            VBO = 0;
-        }
-        if (transVAO) {
-            glDeleteVertexArrays(1, &transVAO);
-            glDeleteBuffers(1, &transVBO);
-            transVAO = 0;
-            transVBO = 0;
-        }
-        if (overlayVAO) {
-            glDeleteVertexArrays(1, &overlayVAO);
-            glDeleteBuffers(1, &overlayVBO);
-            overlayVAO = 0;
-            overlayVBO = 0;
-        }
-    }
+  GLuint m_vao = 0;
+  GLuint m_vbo = 0;
+  GLsizei m_vertexCount = 0;
+  const Chunk *m_source = nullptr;
+  uint8_t m_neighborMask = 0;
+  SubChunkRevisions m_revisions{};
 };

@@ -47,6 +47,7 @@ struct entityBucket {
 struct Chunk {
     static constexpr int VOLUME = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_WIDTH;
     static constexpr int META_VOLUME = VOLUME / 2;
+    static constexpr int SUB_CHUNK_COUNT = CHUNK_HEIGHT / SUB_CHUNK_SIZE;
 
     Int32_2 cpos;
     std::atomic_bool inUse{ false };
@@ -57,6 +58,7 @@ struct Chunk {
     uint8_t   nibbleBlockMeta[META_VOLUME] = { 0 };
 
     std::atomic<ChunkState> state{ ChunkState::Unloaded };
+    std::array<std::atomic_uint64_t, SUB_CHUNK_COUNT> meshRevisions{};
     uint8_t heightMap[CHUNK_WIDTH * CHUNK_WIDTH] = {};
     float   temperature[CHUNK_WIDTH * CHUNK_WIDTH] = {};
     float   humidity[CHUNK_WIDTH * CHUNK_WIDTH] = {};
@@ -147,9 +149,31 @@ struct Chunk {
         return blocks[blockIndex(pos)];
     }
 
+    inline uint64_t getMeshRevision(int slice) const {
+        return meshRevisions[slice].load(std::memory_order_relaxed);
+    }
+
+    inline bool hasRenderableMesh() const {
+        const ChunkState currentState = state.load(std::memory_order_relaxed);
+        return currentState >= ChunkState::Generated && currentState != ChunkState::Unloading;
+    }
+
+    inline void markMeshDirty(Int3 pos) {
+        if (hasRenderableMesh())
+            meshRevisions[pos.y / SUB_CHUNK_SIZE].fetch_add(1, std::memory_order_relaxed);
+    }
+
+    inline void markAllMeshesDirty() {
+        if (hasRenderableMesh()) {
+            for (auto& revision : meshRevisions)
+                revision.fetch_add(1, std::memory_order_relaxed);
+        }
+    }
+
     inline void setBlock(Int3 pos, BlockType id) {
         blocks[blockIndex(pos)] = id;
         isModified = true;
+        markMeshDirty(pos);
     }
 
     inline uint8_t getMeta(Int3 pos) const {
@@ -165,6 +189,7 @@ struct Chunk {
             ? setNibble(meta, getNibbleLow(byte))
             : setNibble(getNibbleHigh(byte), meta);
         isModified = true;
+        markMeshDirty(pos);
     }
 
     inline uint8_t getBlockLight(Int3 pos) const {
@@ -179,12 +204,14 @@ struct Chunk {
         uint8_t& byte = lightNibble[blockIndex(pos)];
         byte = setNibble(getNibbleHigh(byte), val);
         isModified = true;
+        markMeshDirty(pos);
     }
 
     inline void setSkyLight(Int3 pos, uint8_t val) {
         uint8_t& byte = lightNibble[blockIndex(pos)];
         byte = setNibble(val, getNibbleLow(byte));
         isModified = true;
+        markMeshDirty(pos);
     }
 
     inline int getBlockLightValue(Int3 pos, int skySubtracted) const {
@@ -202,5 +229,6 @@ struct Chunk {
         std::memset(heightMap, 0, sizeof(heightMap));
         std::memset(temperature, 0, sizeof(temperature));
         std::memset(humidity, 0, sizeof(humidity));
+        markAllMeshesDirty();
     }
 };

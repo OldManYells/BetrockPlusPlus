@@ -18,6 +18,12 @@ struct Entity;
 struct PlayerSession;
 
 namespace Blocks {
+    struct BlockColor {
+        float red = 0.5f;
+        float green = 0.5f;
+        float blue = 0.5f;
+    };
+
     enum class StepSound : uint8_t {
         Stone,   // default, also metal (different pitch)
         Wood,
@@ -31,6 +37,7 @@ namespace Blocks {
     struct BlockProperties {
         Material  material = Material::Rock();
         StepSound stepSound = StepSound::Stone;
+        BlockColor baseColor{};
 
         uint8_t   lightEmission = 0;      // 0-15
         uint8_t   lightOpacity = 255;    // 0 = transparent, 255 = fully opaque

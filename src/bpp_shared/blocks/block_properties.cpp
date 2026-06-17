@@ -391,6 +391,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_STONE] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.52f, 0.54f, 0.55f },
             .lightOpacity = 255,
             .hardness = 1.5f,
             .resistance = 10.0f,
@@ -400,6 +401,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_GRASS] = {
             .material = Material::Grass(),
             .stepSound = StepSound::Grass,
+            .baseColor = { 0.36f, 0.68f, 0.25f },
             .lightOpacity = 255,
             .hardness = 0.6f,
             .ticksOnLoad = true,
@@ -409,6 +411,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_DIRT] = {
             .material = Material::Ground(),
             .stepSound = StepSound::Gravel,
+            .baseColor = { 0.48f, 0.32f, 0.18f },
             .lightOpacity = 255,
             .hardness = 0.5f,
         };
@@ -417,6 +420,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_COBBLESTONE] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.42f, 0.44f, 0.45f },
             .lightOpacity = 255,
             .hardness = 2.0f,
             .resistance = 10.0f,
@@ -426,6 +430,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_PLANKS] = {
             .material = Material::Wood(),
             .stepSound = StepSound::Wood,
+            .baseColor = { 0.66f, 0.49f, 0.27f },
             .lightOpacity = 255,
             .hardness = 2.0f,
             .resistance = 5.0f,
@@ -450,6 +455,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_BEDROCK] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.24f, 0.24f, 0.24f },
             .hardness = -1.0f,    // unbreakable
             .resistance = 6000000.0f,
             .enableStats = false,
@@ -458,6 +464,7 @@ namespace Blocks {
         // Water (flowing)
         blockProperties[BlockType::BLOCK_WATER_FLOWING] = {
             .material = Material::Water(),
+            .baseColor = { 0.18f, 0.38f, 0.78f },
             .lightOpacity = 3,
             .hardness = 100.0f,
             .isOpaqueCube = false,
@@ -470,6 +477,7 @@ namespace Blocks {
         // Water (still/stationary)
         blockProperties[BlockType::BLOCK_WATER_STILL] = {
             .material = Material::Water(),
+            .baseColor = { 0.18f, 0.38f, 0.78f },
             .lightOpacity = 3,
             .hardness = 100.0f,
             .isOpaqueCube = false,
@@ -482,6 +490,7 @@ namespace Blocks {
         // Lava (flowing)
         blockProperties[BlockType::BLOCK_LAVA_FLOWING] = {
             .material = Material::Lava(),
+            .baseColor = { 0.95f, 0.32f, 0.06f },
             .lightEmission = 15,    // setLightValue(1.0f) -> 15*1.0 = 15
             .lightOpacity = 255,
             .hardness = 0.0f,
@@ -495,6 +504,7 @@ namespace Blocks {
         // Lava (still/stationary)
         blockProperties[BlockType::BLOCK_LAVA_STILL] = {
             .material = Material::Lava(),
+            .baseColor = { 0.95f, 0.32f, 0.06f },
             .lightEmission = 15,
             .lightOpacity = 255,
             .hardness = 100.0f,
@@ -509,6 +519,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_SAND] = {
             .material = Material::Sand(),
             .stepSound = StepSound::Sand,
+            .baseColor = { 0.80f, 0.74f, 0.50f },
             .lightOpacity = 255,
             .hardness = 0.5f,
         };
@@ -517,6 +528,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_GRAVEL] = {
             .material = Material::Sand(),
             .stepSound = StepSound::Gravel,
+            .baseColor = { 0.50f, 0.47f, 0.45f },
             .lightOpacity = 255,
             .hardness = 0.6f,
         };
@@ -525,6 +537,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_ORE_GOLD] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.86f, 0.68f, 0.18f },
             .lightOpacity = 255,
             .hardness = 3.0f,
             .resistance = 5.0f,
@@ -534,6 +547,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_ORE_IRON] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.68f, 0.58f, 0.49f },
             .lightOpacity = 255,
             .hardness = 3.0f,
             .resistance = 5.0f,
@@ -543,6 +557,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_ORE_COAL] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.26f, 0.27f, 0.27f },
             .lightOpacity = 255,
             .hardness = 3.0f,
             .resistance = 5.0f,
@@ -552,6 +567,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_LOG] = {
             .material = Material::Wood(),
             .stepSound = StepSound::Wood,
+            .baseColor = { 0.38f, 0.25f, 0.11f },
             .lightOpacity = 255,
             .hardness = 2.0f,
             .notifyNeighborsOnMetaChange = false,
@@ -561,6 +577,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_LEAVES] = {
             .material = Material::Leaves(),
             .stepSound = StepSound::Grass,
+            .baseColor = { 0.20f, 0.48f, 0.16f },
             .lightOpacity = 1,
             .hardness = 0.2f,
             .isOpaqueCube = false,
@@ -620,6 +637,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_SANDSTONE] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.80f, 0.74f, 0.50f },
             .lightOpacity = 255,
             .hardness = 0.8f,
         };
@@ -970,6 +988,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_ORE_DIAMOND] = {
             .material = Material::Rock(),
             .stepSound = StepSound::Stone,
+            .baseColor = { 0.22f, 0.78f, 0.76f },
             .lightOpacity = 255,
             .hardness = 3.0f,
             .resistance = 5.0f,
@@ -1234,6 +1253,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_SNOW_LAYER] = {
             .material = Material::Snow(),
             .stepSound = StepSound::Cloth,
+            .baseColor = { 0.92f, 0.95f, 1.00f },
             .lightOpacity = 0,
             .hardness = 0.1f,
             .isOpaqueCube = false,
@@ -1255,6 +1275,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_SNOW] = {
             .material = Material::BuiltSnow(),
             .stepSound = StepSound::Cloth,
+            .baseColor = { 0.92f, 0.95f, 1.00f },
             .lightOpacity = 255,
             .hardness = 0.2f,
         };
@@ -1263,6 +1284,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_CACTUS] = {
             .material = Material::Cactus(),
             .stepSound = StepSound::Cloth,
+            .baseColor = { 0.20f, 0.52f, 0.22f },
             .lightOpacity = 0,
             .hardness = 0.4f,
             .isOpaqueCube = false,
@@ -1275,6 +1297,7 @@ namespace Blocks {
         blockProperties[BlockType::BLOCK_CLAY] = {
             .material = Material::Clay(),
             .stepSound = StepSound::Gravel,
+            .baseColor = { 0.58f, 0.62f, 0.66f },
             .lightOpacity = 255,
             .hardness = 0.6f,
         };

@@ -15,7 +15,7 @@ Keep it reasonable, don't overdo it. This is supposed to be a learning-exercise 
 Grab the `main` branch for the most up-to-date, albeit unstable, repository.
 
 ## Recommended VSCode Extensions
-- `clangd` (ideally `clangd-22` for Doxygen comment integration)
+- `clangd` (ideally `clangd-22` for Doxygen comment integration). Also used as formatter.
 - CMake Tools
 - Doxygen Documentation Generator
 

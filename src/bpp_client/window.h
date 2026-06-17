@@ -37,12 +37,10 @@ public:
             throw std::runtime_error("Failed to init GLAD");
         }
 
-        glViewport(0, 0, width, height);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 
-        m_width = width;
-        m_height = height;
+        syncFramebufferSize();
         GlobalLogger().info << "Window initialized!\n";
         // Note: user pointer is set by Client, not here
     }
@@ -50,6 +48,7 @@ public:
     // Called by Client after setting the user pointer
     void initCallbacks(GLFWwindow* win) {
         glfwSetFramebufferSizeCallback(win, framebufferSizeCallback);
+        syncFramebufferSize();
     }
 
     ~Window() {
@@ -64,11 +63,17 @@ public:
     bool shouldClose() const {
         return glfwWindowShouldClose(m_handle);
     }
+    void requestClose() {
+        glfwSetWindowShouldClose(m_handle, GLFW_TRUE);
+    }
     void swapBuffers() {
         glfwSwapBuffers(m_handle);
     }
     void pollEvents() {
         glfwPollEvents();
+        // Some compositors can deliver the initial framebuffer scale before
+        // callbacks are registered, so keep the viewport synchronized here too.
+        syncFramebufferSize();
     }
 
     void setVsync(bool enabled) {
@@ -84,13 +89,26 @@ public:
 
     int   getWidth()  const { return m_width; }
     int   getHeight() const { return m_height; }
-    float getAspect() const { return float(m_width) / float(m_height); }
+    float getAspect() const {
+        return m_height > 0 ? float(m_width) / float(m_height) : 1.0f;
+    }
 
     GLFWwindow* getHandle() const { return m_handle; }
 
 private:
+    void syncFramebufferSize() {
+        int width = 0;
+        int height = 0;
+        glfwGetFramebufferSize(m_handle, &width, &height);
+        if (width == m_width && height == m_height) return;
+        m_width = width;
+        m_height = height;
+        glViewport(0, 0, width, height);
+    }
+
     static void framebufferSizeCallback(GLFWwindow* win, int w, int h) {
         auto* ctx = static_cast<GlfwContext*>(glfwGetWindowUserPointer(win));
+        if (!ctx || !ctx->m_window) return;
         ctx->m_window->m_width = w;
         ctx->m_window->m_height = h;
         glViewport(0, 0, w, h);
